@@ -1,0 +1,93 @@
+{
+  "total": 6,
+  "p": 1,
+  "ps": 500,
+  "issues": [
+    {
+      "key": "AY1a-blocker-001",
+      "rule": "java:S2076",
+      "severity": "BLOCKER",
+      "component": "merchant-payments-api:src/main/java/com/example/pay/CmdRunner.java",
+      "project": "merchant-payments-api",
+      "line": 142,
+      "message": "Make sure that executing this OS command is safe here (command injection).",
+      "type": "VULNERABILITY",
+      "status": "OPEN",
+      "creationDate": "2025-01-15T10:00:00+0000"
+    },
+    {
+      "key": "AY1a-blocker-002",
+      "rule": "java:S3649",
+      "severity": "BLOCKER",
+      "component": "merchant-payments-api:src/main/java/com/example/pay/UserDao.java",
+      "project": "merchant-payments-api",
+      "line": 88,
+      "message": "Change this code to not construct SQL queries directly from user-controlled data.",
+      "type": "VULNERABILITY",
+      "status": "CONFIRMED",
+      "creationDate": "2025-02-15T10:00:00+0000"
+    },
+    {
+      "key": "AY1a-crit-001",
+      "rule": "java:S5344",
+      "severity": "CRITICAL",
+      "component": "merchant-payments-api:src/main/java/com/example/pay/Auth.java",
+      "project": "merchant-payments-api",
+      "line": 55,
+      "message": "Use a stronger hashing algorithm than MD5 to store passwords.",
+      "type": "VULNERABILITY",
+      "status": "OPEN",
+      "creationDate": "2025-03-15T10:00:00+0000"
+    },
+    {
+      "key": "AY1a-crit-777",
+      "rule": "java:S2083",
+      "severity": "CRITICAL",
+      "component": "merchant-payments-api:src/main/java/com/example/pay/FileServlet.java",
+      "project": "merchant-payments-api",
+      "line": 210,
+      "message": "Change this code to not construct the file path from user-controlled data (path traversal).",
+      "type": "VULNERABILITY",
+      "status": "OPEN",
+      "creationDate": "2025-04-15T10:00:00+0000"
+    },
+    {
+      "key": "AY1b-crit-001",
+      "rule": "javascript:S2068",
+      "severity": "CRITICAL",
+      "component": "hosted-checkout-ui:src/config/secrets.js",
+      "project": "hosted-checkout-ui",
+      "line": 12,
+      "message": "Review this hard-coded password.",
+      "type": "VULNERABILITY",
+      "status": "OPEN",
+      "creationDate": "2025-05-15T10:00:00+0000"
+    },
+    {
+      "key": "AY1c-crit-001",
+      "rule": "python:S5443",
+      "severity": "CRITICAL",
+      "component": "analytics-service:src/analytics/tmpfile.py",
+      "project": "analytics-service",
+      "line": 33,
+      "message": "Use a unique, unpredictable temporary file name to avoid insecure temp file usage.",
+      "type": "VULNERABILITY",
+      "status": "OPEN",
+      "creationDate": "2025-06-15T10:00:00+0000"
+    }
+  ],
+  "components": [
+    {
+      "key": "merchant-payments-api",
+      "name": "Merchant Payments API"
+    },
+    {
+      "key": "hosted-checkout-ui",
+      "name": "Hosted Checkout UI"
+    },
+    {
+      "key": "analytics-service",
+      "name": "Analytics Service"
+    }
+  ]
+}

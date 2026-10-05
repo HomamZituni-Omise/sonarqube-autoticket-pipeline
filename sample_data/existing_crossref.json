@@ -1,0 +1,20 @@
+[
+  {
+    "key": "BACKLOG-1079",
+    "project": "BACKLOG",
+    "summary": "Payment Gateway - Disable access to external entities in XML parsing (Severity: Blocker)",
+    "description": "Overview. Application: Payment Gateway. Component: XML parsing across multiple classes. Rule ID: CWE-611, OWASP-A4. Multiple XML parsers instantiated without disabling external entity resolution (XXE). src/main/java/com/example/api/InvoiceResponseContainer.java Line 80 DocumentBuilderFactory.newInstance() with no XXE protections. src/main/java/com/example/api/InvoiceImporter.java Line 157 TransformerFactory.newInstance(). src/main/java/com/example/api/InvoiceImporter.java Line 168 DocumentBuilderFactory.newInstance(). src/main/java/com/example/util/XmlTools.java Line 41. SonarQube Rule: java:S2755. This ticket covers all 7 XXE instances across the Payment Gateway."
+  },
+  {
+    "key": "BACKLOG-1074",
+    "project": "BACKLOG",
+    "summary": "Payment Gateway - Disabled SSL/TLS certificate validation and weak protocol (Severity: Critical)",
+    "description": "Payment Gateway Disabled SSL/TLS Certificate Validation & Weak Protocol. Component: src/main/java/com/example/net/HttpClientUtil.java. Line 41 checkClientTrusted() empty. Line 42 checkServerTrusted() empty. Line 47 SSLContext.getInstance(SSL) deprecated protocol. CWE-295, CWE-327. SonarQube Rule java:S4830 Server certificate validation. SonarQube Rule java:S4423 Weak SSL/TLS protocols."
+  },
+  {
+    "key": "BACKLOG-1102",
+    "project": "BACKLOG",
+    "summary": "Scheduler Service 38 Vulnerabilities (Dynamic Class Loading, SSL/TLS, Session Management) (Severity: Critical)",
+    "description": "Scheduler Service 38 vulnerabilities across dynamic class loading, SSL/TLS and session management. Rules include java:S4423 and others across scheduler source files."
+  }
+]

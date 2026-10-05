@@ -1,0 +1,14 @@
+{
+  "merchant-payments-api|BLOCKER": {
+    "key": "SEC-9001",
+    "dedupe_keys": ["AY1a-blocker-001", "AY1a-blocker-002"]
+  },
+  "merchant-payments-api|CRITICAL": {
+    "key": "SEC-9002",
+    "dedupe_keys": ["AY1a-crit-001"]
+  },
+  "hosted-checkout-ui|CRITICAL": {
+    "key": "SEC-9003",
+    "dedupe_keys": ["AY1b-crit-001", "AY1b-crit-002"]
+  }
+}

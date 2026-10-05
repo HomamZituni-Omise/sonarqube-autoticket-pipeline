@@ -1,0 +1,10 @@
+.env
+.env.bak-*
+last_run.txt
+run.log
+*.log
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/

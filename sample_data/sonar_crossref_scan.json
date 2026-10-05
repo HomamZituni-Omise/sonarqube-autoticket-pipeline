@@ -1,0 +1,51 @@
+{
+  "total": 4,
+  "components": [
+    {
+      "key": "payment-gateway",
+      "name": "Payment Gateway"
+    }
+  ],
+  "issues": [
+    {
+      "key": "PG-XXE-001",
+      "project": "payment-gateway",
+      "component": "payment-gateway:src/main/java/com/example/api/InvoiceImporter.java",
+      "severity": "BLOCKER",
+      "rule": "java:S2755",
+      "message": "Disable access to external entities in XML parsing.",
+      "line": 157,
+      "creationDate": "2025-01-15T10:00:00+0000"
+    },
+    {
+      "key": "PG-XXE-002",
+      "project": "payment-gateway",
+      "component": "payment-gateway:src/main/java/com/example/util/XmlTools.java",
+      "severity": "BLOCKER",
+      "rule": "java:S2755",
+      "message": "Disable access to external entities in XML parsing.",
+      "line": 41,
+      "creationDate": "2025-02-15T10:00:00+0000"
+    },
+    {
+      "key": "PG-TLS-001",
+      "project": "payment-gateway",
+      "component": "payment-gateway:src/main/java/com/example/net/HttpClientUtil.java",
+      "severity": "CRITICAL",
+      "rule": "java:S4423",
+      "message": "Change this code to use a stronger protocol.",
+      "line": 47,
+      "creationDate": "2025-03-15T10:00:00+0000"
+    },
+    {
+      "key": "PG-NEW-999",
+      "project": "payment-gateway",
+      "component": "payment-gateway:src/main/java/com/example/api/NewlyAddedServlet.java",
+      "severity": "CRITICAL",
+      "rule": "java:S5344",
+      "message": "Use a stronger hashing algorithm than MD5 to store passwords.",
+      "line": 12,
+      "creationDate": "2025-04-15T10:00:00+0000"
+    }
+  ]
+}
