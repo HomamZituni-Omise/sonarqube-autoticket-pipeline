@@ -36,6 +36,7 @@ from .crossref import CrossRefIndex, TicketSignature, extract_signature, build_i
 from .grouping import group_findings, render_body
 from .jira_client import ExistingTicket, JiraClient
 from .reconcile import Case, reconcile, update_comment
+from .report import write_report
 from .sonar_client import SonarClient
 
 
@@ -183,6 +184,8 @@ def run(
     scan_label = _scan_label()
     counts = {Case.CREATE: 0, Case.SKIP: 0, Case.UPDATE: 0, Case.ANNOTATE: 0}
     overlap_flags = 0
+    # Per-bucket detail collected for the Markdown run report (report.py).
+    report_buckets: list[dict] = []
 
     for t in tickets:
         rec = reconcile(t, existing.get(t.autoticket_id))
@@ -190,6 +193,11 @@ def run(
 
         if rec.case is Case.SKIP:
             print(f"  [B] SKIP  {t.autoticket_id}: {t.summary} (unchanged)")
+            report_buckets.append({
+                "project": t.project_name, "severity": t.severity,
+                "count": len(t.findings), "outcome": "Skip",
+                "detail": "unchanged",
+            })
             continue
 
         if rec.case is Case.CREATE:
@@ -225,6 +233,11 @@ def run(
                 print(f"  [B] ALREADY TRACKED  {t.autoticket_id}: {t.summary} "
                       f"— all {len(t.findings)} finding(s) pre-date {cutoff} "
                       f"(oldest {oldest}); no ticket created.")
+                report_buckets.append({
+                    "project": t.project_name, "severity": t.severity,
+                    "count": len(t.findings), "outcome": "Already tracked",
+                    "detail": f"all pre-date {cutoff} (oldest {oldest})",
+                })
                 continue
 
             # At least one genuinely new finding — report cross-project context
@@ -258,11 +271,21 @@ def run(
                 # Ticket body should contain only the NEW findings.
                 new_ticket = _bucket_of(t, new_findings)
                 print(render_body(new_ticket))
+                report_buckets.append({
+                    "project": t.project_name, "severity": t.severity,
+                    "count": len(t.findings), "outcome": "Would create",
+                    "detail": f"{len(new_findings)} new since {cutoff}",
+                })
             else:
                 new_ticket = _bucket_of(t, new_findings)
                 key = jira.create_ticket(new_ticket)
                 print(f"  [A] CREATED {key}: {new_ticket.summary} "
                       f"({len(new_findings)} new finding(s))")
+                report_buckets.append({
+                    "project": t.project_name, "severity": t.severity,
+                    "count": len(t.findings), "outcome": "Created",
+                    "detail": f"{key} — {len(new_findings)} new finding(s)",
+                })
             continue
 
         # Case C (UPDATE) or Case D (ANNOTATE) — both refresh an existing
@@ -290,6 +313,13 @@ def run(
             jira.update_body(target, body, summary=t.summary)
             jira.add_comment(target, comment)
             print(f"  [{tag}] {verb} {target}: {t.summary}")
+
+        report_buckets.append({
+            "project": t.project_name, "severity": t.severity,
+            "count": len(t.findings),
+            "outcome": ("Would " if dry_run else "") + verb,
+            "detail": target,
+        })
 
     print("\n" + "=" * 72)
     prefix = "DRY RUN complete" if dry_run else "Done"
@@ -345,6 +375,31 @@ def run(
         write_watermark(today)
         print(f"Watermark advanced: next run will scan for findings created "
               f"on/after {today} (saved to last_run.txt).")
+        watermark_advanced_to = today
+    else:
+        watermark_advanced_to = None
+
+    # Write a Markdown run report (best-effort; never raises). Gives
+    # at-a-glance confirmation the job ran and what it found, so the operator
+    # doesn't have to wonder or dig through logs.
+    write_report({
+        "mode": "dry-run" if dry_run else ("mock" if mock_path else "live"),
+        "counts": {
+            "create": counts[Case.CREATE],
+            "skip": counts[Case.SKIP],
+            "update": counts[Case.UPDATE],
+            "annotate": counts[Case.ANNOTATE],
+        },
+        "buckets": report_buckets,
+        "unmapped": list(unmapped) if unmapped else [],
+        "total_findings": len(findings),
+        "total_buckets": len(tickets),
+        "cutoff": settings.new_since,
+        "severities": ", ".join(settings.trigger_severities),
+        "types": ", ".join(settings.trigger_types),
+        "crossref_count": (len(crossref.signatures) if crossref is not None else None),
+        "watermark_advanced_to": watermark_advanced_to,
+    })
 
     return 0
 

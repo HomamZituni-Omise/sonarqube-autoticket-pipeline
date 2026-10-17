@@ -140,6 +140,27 @@ The **watermark** (`last_run.txt`) holds the "new since" cutoff. It advances to
 today **only after a fully successful run**, so a failure never skips a window —
 the next run retries from the same cutoff.
 
+### Run report (Markdown)
+
+Every run also writes a Markdown summary so you have at-a-glance confirmation the
+job ran and what it found — without digging through logs or Jira. The file is
+named `AutoTicket-Job-MM-DD-YYYY.md` (today's date) and is written to the first
+writable location of:
+
+1. `$AUTOTICKET_REPORT_DIR` (if set)
+2. `~/Desktop`
+3. `~/Library/Logs` (fallback)
+
+The report contains the run timestamp/mode, a summary table (findings, buckets,
+created/skipped/updated counts, cutoff, watermark), a per-bucket table, and an
+"action needed" section listing any unmapped projects. Writing the report is
+best-effort and never fails the run.
+
+> Note: on modern macOS, background `launchd` agents are blocked from writing to
+> the TCC-protected Desktop, so scheduled runs typically land the report in
+> `~/Library/Logs` (or set `AUTOTICKET_REPORT_DIR` to a non-protected path).
+> Interactive/manual runs write to the Desktop directly.
+
 ## Project discovery & branch mapping
 
 The scan discovers projects **dynamically** — it lists every project visible to
