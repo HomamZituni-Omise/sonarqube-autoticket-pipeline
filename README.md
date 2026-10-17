@@ -104,6 +104,38 @@ loads `.env`, runs the module, and on a non-zero exit invokes `autoticket.notify
 to open a Jira ticket about the failed run. Set `AUTOTICKET_DIR` to the project
 path if you don't run it from the project root.
 
+### Connectivity preflight (VPN check)
+
+Before the real run, the wrapper probes whether the SonarQube host (derived from
+`SONAR_BASE_URL`) is reachable — useful when SonarQube is only accessible over a
+corporate VPN or private network:
+
+- **Reachable** → proceeds to the run.
+- **Unreachable, interactive terminal** → warns and prompts for a go-ahead so
+  you can connect to the VPN first.
+- **Unreachable, unattended/scheduled run** → prints a reminder and exits `0`
+  **without running**, so no spurious failure ticket is opened and the watermark
+  is left untouched for a clean retry on the next run.
+
+Set `AUTOTICKET_SKIP_PREFLIGHT=1` to disable the check.
+
+### Example schedule (macOS launchd)
+
+A monthly run is a common cadence. For example, to run on the **16th of each
+month at 1:00 PM** local time, a launchd agent's calendar interval would be:
+
+```xml
+<key>StartCalendarInterval</key>
+<dict>
+    <key>Day</key>    <integer>16</integer>
+    <key>Hour</key>   <integer>13</integer>
+    <key>Minute</key> <integer>0</integer>
+</dict>
+```
+
+`launchd` fires on the host's local wall-clock time and catches up missed runs
+if the machine was asleep. The equivalent cron entry would be `0 13 16 * *`.
+
 The **watermark** (`last_run.txt`) holds the "new since" cutoff. It advances to
 today **only after a fully successful run**, so a failure never skips a window —
 the next run retries from the same cutoff.
